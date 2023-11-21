@@ -241,12 +241,27 @@ the file to proper location and insert a link to that file."
 ;;; Creating Links
 ;;;;;
 
+(defcustom org-mpv-notes-timestamp-lag 0
+  "Number of seconds to subtract when setting timestamp.
+
+This variable acknowledges that many of us may sometimes be slow
+to create a note or link."
+  :type 'integer
+  :group 'org-mpv-notes)
+
+(defun org-mpv-notes-timestamp-lag-modify (seconds)
+  "Change the timestanp lag."
+  (interactive "nlag seconds: ")
+  (if (> 0 seconds)
+    (error "Error: positive integer required"))
+   (setq org-mpv-notes-timestamp-lag seconds))
+
 (cl-defun org-mpv-notes--create-link (&optional (read-description t))
   "Create a link with timestamp to insert in org file.
 If `READ-DESCRIPTION' is true, ask for a link description from user."
   (let* ((path (org-link-escape (mpv-get-property "path")))
          (time (mpv-get-playback-position))
-
+         (time (max 0 (- time org-mpv-notes-timestamp-lag)))
          (h (floor (/ time 3600)))
          (m (floor (/ (mod time 3600) 60)))
          (s (floor (mod time 60)))
