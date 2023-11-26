@@ -221,7 +221,8 @@ the file to proper location and insert a link to that file."
 ;;; Motion (jump to next, previous, ... link)
 ;;;;;
 
-(defvar org-mpv-notes-link-regex "\\[\\[mpv:\\([^\\n\\]*?\\)\\]\\[\\([^\\n]*?\\)\\]\\]")
+(defvar org-mpv-notes-link-regex "\\[\\[mpv:\\(\\(?:[^][\\]\\|\\\\\\(?:\\\\\\\\\\)*[][]\\|\\\\+[^][]\\)+\\)]\\(?:\\[\\([^z-a]+?\\)]\\)?]"
+  "A subset of variable `org-bracket-link-regexp', specific for org-mpv-notes.")
 
 (defun org-mpv-notes-next-timestamp ()
   "Seek to next timestamp in the notes file."
@@ -293,6 +294,18 @@ the file to proper location and insert a link to that file."
 ;;;;;
 ;;; Creating Links
 ;;;;;
+
+(defcustom org-mpv-notes-pause-on-link-create nil
+  "Whether to automatically pause mpv when creating a link or note."
+  :type 'boolean
+  :group 'org-mpv-notes)
+
+(defun org-mpv-notes-toggle-pause-on-link-create ()
+  "Toggle whether to automatically pause mpv when creating a link or note."
+  (interactive)
+  (setq org-mpv-notes-pause-on-link-create (not org-mpv-notes-pause-on-link-create))
+  (message "mpv will now %spause when creating an org-mpv link/note"
+    (if org-mpv-notes-pause-on-link-create "" "NOT ")))
 
 (defcustom org-mpv-notes-timestamp-lag 0
   "Number of seconds to subtract when setting timestamp.
