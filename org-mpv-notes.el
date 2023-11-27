@@ -142,7 +142,7 @@ ARG is passed to `org-link-complete-file'."
              (seek (secs)
                    (if (eql backend 'mpv)
                        (mpv-seek secs)
-                     (empv--cmd 'seek secs "absolute+"))))
+                     (empv-seek secs '("absolute")))))
 
         ;; Open mpv player
         (cond ((not (alive?))
