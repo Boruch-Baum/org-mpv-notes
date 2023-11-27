@@ -29,7 +29,7 @@
 (require 'empv nil 'noerror)
 (require 'org-attach)
 (require 'org-element)
-
+(require 'org-timer)
 
 ;;;;;
 ;;; MPV and EMPV Compatibility Layer
