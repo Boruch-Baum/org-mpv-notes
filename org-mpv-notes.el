@@ -111,6 +111,7 @@ ARG is passed to `org-link-complete-file'."
 (defun org-mpv-notes-open (path &optional arg)
   "Open the mpv `PATH'.
 `ARG' is required by org-follow-link but is ignored here."
+  (interactive "fSelect file to open: ")
   (cl-multiple-value-bind (path secs) (org-mpv-notes--parse-link path)
     ;; Enable Minor mode
     (org-mpv-notes t)
@@ -331,7 +332,8 @@ If `READ-DESCRIPTION' is true, ask for a link description from user."
                   (empv--running?)))
          (path (progn
                  (when (not alive)
-                   (call-interactively 'org-mpv-notes-open))
+                   (call-interactively 'org-mpv-notes-open)
+                   (sleep-for 0.05))
                  (org-link-escape
                    (or (if mpv-backend
                          (mpv-get-property "path")
