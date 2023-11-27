@@ -271,7 +271,7 @@ If there is no timestamp at POINT, consider the previous one as
   (interactive)
   (cond
    ((org-mpv-notes-timestamp-p)
-     (org-mpv-notes-open path)
+     (org-mpv-notes-open (org-element-property :path (org-element-context)))
      (org-show-entry)
      (recenter))
    (t
@@ -368,9 +368,7 @@ If `READ-DESCRIPTION' is true, ask for a link description from user."
   (let ((link  (org-mpv-notes--create-link nil)))
     (when link
       (org-insert-heading)
-      (save-excursion
-        (org-insert-property-drawer)
-        (org-set-property "mpv_link" link)))))
+      (insert link))))
 
 (defun org-mpv-notes-insert-link ()
   "Insert link with timestamp."
