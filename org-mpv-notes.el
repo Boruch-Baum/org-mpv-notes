@@ -223,15 +223,37 @@ the file to proper location and insert a link to that file."
 (defvar org-mpv-notes-link-regex "\\[\\[mpv:\\(\\(?:[^][\\]\\|\\\\\\(?:\\\\\\\\\\)*[][]\\|\\\\+[^][]\\)+\\)]\\(?:\\[\\([^z-a]+?\\)]\\)?]"
   "A subset of variable `org-bracket-link-regexp', specific for org-mpv-notes.")
 
+(defcustom org-mpv-narrow-timestamp-navigation nil
+  "Restrict timestamp navigation to within the current heading.
+This affects functions `org-mpv-notes-next-timestamp' and
+`org-mpv-notes-previous-timestamp'."
+  :type 'boolean
+  :group 'org-mpv-notes)
+
+(defun org-mpv-notes-timestamp-p ()
+  "Return non-NIL if POINT is on a timestamp."
+ (string-match "mpv" (or (org-element-property :type (org-element-context)) "")))
+
 (defun org-mpv-notes-next-timestamp (&optional reverse)
   "Seek to next timestamp in the notes file."
   (interactive)
-  (let (success)
-    (while (and (not success) (org-next-link reverse))
-      (when (string-match "mpv" (or (org-element-property :type (org-element-context)) ""))
-        (setq success t)))
+  (let ((p (point))
+        success)
+    (save-excursion
+      (when org-mpv-narrow-timestamp-navigation
+        (org-narrow-to-subtree))
+      (while (and (not success)
+                  (org-next-link reverse)
+                  (not (eq p (point))))
+        (when (and (org-mpv-notes-timestamp-p)
+                   (not (eq p (point))))
+          (setq success t))
+        (setq p (point)))
+     (when org-mpv-narrow-timestamp-navigation
+       (widen)))
     (if (not success)
       (error "Error: No %s link" (if reverse "prior" "next"))
+     (goto-char p)
      (org-open-at-point)
      (org-show-entry)
      (recenter))))
@@ -242,20 +264,17 @@ the file to proper location and insert a link to that file."
   (org-mpv-notes-next-timestamp t))
 
 (defun org-mpv-notes-this-timestamp ()
-  "Seeks to the timestamp at point or stored in the property drawer of the heading."
+  "Seek to the timestamp at POINT or previous.
+If there is no timestamp at POINT, consider the previous one as
+'this' one."
   (interactive)
-  (let* ((element (org-element-context))
-         (path (and element
-                    (eql (org-element-type element) 'link)
-                    (org-element-property :path element))))
-    (unless path
-      (let ((raw-link (org-entry-get (point) "mpv_link" t)))
-        (when (and raw-link (string-match org-mpv-notes-link-regex raw-link))
-          (setf path (match-string 1 raw-link)))))
-
-    (org-mpv-notes-open path)
-    (org-show-entry)
-    (recenter)))
+  (cond
+   ((org-mpv-notes-timestamp-p)
+     (org-mpv-notes-open path)
+     (org-show-entry)
+     (recenter))
+   (t
+     (save-excursion (org-mpv-notes-previous-timestamp)))))
 
 ;;; Creating Links
 ;;;;;
