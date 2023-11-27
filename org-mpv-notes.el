@@ -156,10 +156,14 @@ ARG is passed to `org-link-complete-file'."
 (defun org-mpv-notes-save-as-attach (file)
   "Save image FILE to org file using `org-attach'."
   ;; attach it
-  (let ((org-attach-method 'mv))
-    (org-attach-attach file))
-  ;; insert the link
-  (insert "[[attachment:" (file-name-base file) "." (file-name-extension file) "]]"))
+  (let ((org-attach-method 'mv)
+        (org-attach-store-link-p 'file))
+    (sleep-for org-mpv-notes-empv-wait-interval)
+    (org-attach-attach file)
+    (sleep-for org-mpv-notes-empv-wait-interval)
+    ;; insert the link
+    (org-insert-link "hello" file)
+    (insert "  " "[[attachment:" (file-name-base file) "." (file-name-extension file) "]]")))
 
 (defcustom org-mpv-notes-save-image-function
   #'org-mpv-notes-save-as-attach
