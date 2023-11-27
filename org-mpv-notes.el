@@ -42,7 +42,8 @@
                   t))
       (and (cl-find 'empv features)
            (empv--running?)
-           (progn (empv--cmd cmd args)
+;          (progn (empv--cmd cmd args)
+           (progn (empv--send-command-sync (list cmd args))
                   t))
       (error "Please open a audio/video in either mpv or empv library")))
 
