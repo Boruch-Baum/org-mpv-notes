@@ -35,6 +35,13 @@
 ;;; MPV and EMPV Compatibility Layer
 ;;;;;
 
+(defcustom org-mpv-notes-empv-wait-interval 0.1
+  "How many seconds to wait for mpv to settle.
+This may be necessary because much of the empv library runs
+asynchronously."
+  :type 'float
+  :group 'org-mpv-notes)
+
 (defun org-mpv-notes--cmd (cmd &rest args)
   (or (and (cl-find 'mpv features)
            (mpv-live-p)
@@ -142,12 +149,11 @@ ARG is passed to `org-link-complete-file'."
                (start path))
               ((not (string-equal (org-mpv-notes--get-property "path") path))
                (kill)
-               (sleep-for 0.05)
+               (sleep-for org-mpv-notes-empv-wait-interval)
                (start path)))
         ;; Jump to link
-        (when secs
-          (sleep-for 0.05)
-          (seek secs))))))
+          (sleep-for org-mpv-notes-empv-wait-interval)
+          (seek (or secs 0))))))
 
 ;;;;;
 ;;; Screenshot
@@ -335,7 +341,7 @@ If `READ-DESCRIPTION' is true, ask for a link description from user."
          (path (progn
                  (when (not alive)
                    (call-interactively 'org-mpv-notes-open)
-                   (sleep-for 0.05))
+                   (sleep-for org-mpv-notes-empv-wait-interval))
                  (org-link-escape
                    (or (if mpv-backend
                          (mpv-get-property "path")
