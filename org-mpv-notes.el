@@ -340,7 +340,6 @@ If `READ-DESCRIPTION' is true, ask for a link description from user."
                         (with-timeout (1 nil)
                           (empv--send-command-sync (list "get_property" 'path))))
                        (org-mpv-notes-open "")))))
-
          (time (if alive
                  (or (if mpv-backend
                        (mpv-get-playback-position)
@@ -370,12 +369,12 @@ If `READ-DESCRIPTION' is true, ask for a link description from user."
   (let ((link  (org-mpv-notes--create-link nil)))
     (when link
       (org-insert-heading)
-      (insert link))))
+      (insert (file-name-nondirectory (car (org-mpv-notes--parse-link link))) "\n" link " "))))
 
 (defun org-mpv-notes-insert-link ()
   "Insert link with timestamp."
   (interactive)
-  (insert (org-mpv-notes--create-link t)))
+  (insert (org-mpv-notes--create-link t) " "))
 
 (defun org-mpv-notes-replace-timestamp-with-link (link)
   "Convert from old format (timestamp only) to new format (link with timestamp).
