@@ -248,7 +248,8 @@ This affects functions `org-mpv-notes-next-timestamp' and
   "Seek to next timestamp in the notes file."
   (interactive)
   (let ((p (point))
-        success)
+        success
+        context)
     (save-excursion
       (when org-mpv-narrow-timestamp-navigation
         (org-narrow-to-subtree))
@@ -264,9 +265,12 @@ This affects functions `org-mpv-notes-next-timestamp' and
     (if (not success)
       (error "Error: No %s link" (if reverse "prior" "next"))
      (goto-char p)
-     (org-open-at-point)
+     (org-mpv-notes-open
+       (org-element-property :path (setq context (org-element-context))))
      (org-show-entry)
-     (recenter))))
+     (recenter)
+     (goto-char (org-element-property :contents-end context))
+     (search-forward org-mpv-notes-link-suffix nil t))))
 
 (defun org-mpv-notes-previous-timestamp ()
   "Seek to previous timestamp in the notes file."
@@ -288,6 +292,17 @@ If there is no timestamp at POINT, consider the previous one as
 
 ;;; Creating Links
 ;;;;;
+
+(defcustom org-mpv-notes-link-prefix "\n\n("
+  "String to precede timestamp links."
+  :type 'string
+  :group 'org-mpv-notes)
+
+(defcustom org-mpv-notes-link-suffix "): "
+  "String to follow timestamp links."
+  :type 'string
+  :group 'org-mpv-notes)
+
 
 (defcustom org-mpv-notes-pause-on-link-create nil
   "Whether to automatically pause mpv when creating a link or note."
@@ -328,7 +343,7 @@ to create a note or link."
   (message "mpv will now %spause when creating an org-mpv link/note"
     (if org-mpv-notes-pause-on-link-create "" "NOT ")))
 
-(cl-defun org-mpv-notes--create-link (&optional (read-description t))
+(cl-defun org-mpv-notes--create-link (&optional read-description)
   "Create a link with timestamp to insert in org file.
 If `READ-DESCRIPTION' is true, ask for a link description from user."
   (let* ((mpv-backend (or (and (cl-find 'mpv features) (mpv-live-p))
@@ -347,7 +362,8 @@ If `READ-DESCRIPTION' is true, ask for a link description from user."
                          (mpv-get-property "path")
                         (with-timeout (1 nil)
                           (empv--send-command-sync (list "get_property" 'path))))
-                       (org-mpv-notes-open "")))))
+                       (org-mpv-notes-open "")
+                       ""))))
          (time (if alive
                  (or (if mpv-backend
                        (mpv-get-playback-position)
@@ -366,23 +382,49 @@ If `READ-DESCRIPTION' is true, ask for a link description from user."
         (mpv-pause))
        (empv-pause))
     (when read-description
-      (setq description (read-string "Description: ")))
+      (setq description (read-string "Description: " timestamp)))
     (when (string-equal description "")
       (setf description timestamp))
     (concat "[[mpv:" path "::" timestamp "][" description "]]")))
 
-(defun org-mpv-notes-insert-note ()
-  "Insert a heading with link & timestamp."
-  (interactive)
-  (let ((link  (org-mpv-notes--create-link nil)))
+(defun org-mpv-notes-insert-note (&optional prompt-for-description)
+  "Insert a heading with link & timestamp.
+With PREFIX-ARG, over-ride the setting of variable
+`org-mpv-notes-insert-link-prompt-for-description'."
+  (interactive "P")
+  (let ((link
+          (org-mpv-notes--create-link
+            (if prompt-for-description
+               (not org-mpv-notes-insert-link-prompt-for-description)
+              org-mpv-notes-insert-link-prompt-for-description))))
     (when link
       (org-insert-heading)
-      (insert (file-name-nondirectory (car (org-mpv-notes--parse-link link))) "\n" link " "))))
+      (insert (file-name-nondirectory (car (org-mpv-notes--parse-link link)))
+              org-mpv-notes-link-prefix
+              link
+              org-mpv-notes-link-suffix))))
 
-(defun org-mpv-notes-insert-link ()
-  "Insert link with timestamp."
-  (interactive)
-  (insert (org-mpv-notes--create-link t) " "))
+(defcustom org-mpv-notes-insert-link-prompt-for-description nil
+  "Prompt the user for a custom link descrption.
+NIL means use the timestamp in conjunction with variables
+`org-mpv-notes-link-prefix' and `org-mpv-notes-link-suffix'. This
+value can be over-ridden on a per-use basis at run-time by
+calling function `org-mpv-notes-insert-link' with a prefix
+argument."
+  :type 'boolean
+  :group 'org-mpv-notes)
+
+(defun org-mpv-notes-insert-link (&optional prompt-for-description)
+  "Insert link with timestamp.
+With PREFIX-ARG, over-ride the setting of variable
+`org-mpv-notes-insert-link-prompt-for-description'."
+  (interactive "P")
+  (insert org-mpv-notes-link-prefix
+          (org-mpv-notes--create-link
+            (if prompt-for-description
+               (not org-mpv-notes-insert-link-prompt-for-description)
+              org-mpv-notes-insert-link-prompt-for-description))
+          org-mpv-notes-link-suffix))
 
 (defun org-mpv-notes-replace-timestamp-with-link (link)
   "Convert from old format (timestamp only) to new format (link with timestamp).
