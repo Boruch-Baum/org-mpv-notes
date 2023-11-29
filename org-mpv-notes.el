@@ -331,11 +331,6 @@ to create a note or link."
     (error "Error: positive integer required"))
    (setq org-mpv-notes-timestamp-lag seconds))
 
-(defcustom org-mpv-notes-pause-on-link-create nil
-  "Whether to automatically pause mpv when creating a link or note."
-  :type 'boolean
-  :group 'org-mpv-notes)
-
 (defun org-mpv-toggle-pause-on-link-create ()
   "Toggle whether to automatically pause mpv when creating a link or note."
   (interactive)
