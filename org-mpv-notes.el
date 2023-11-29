@@ -29,7 +29,6 @@
 (require 'empv nil 'noerror)
 (require 'org-attach)
 (require 'org-element)
-(require 'org-timer)
 
 ;;;;;
 ;;; MPV and EMPV Compatibility Layer
@@ -135,7 +134,11 @@ ARG is passed to `org-link-complete-file'."
       (setq split (append split '(0)))
      (setf (cadr split)
        (cond ((string-match (concat "^" org-mpv-notes-timestamp-regex "$") secs)
-              (org-timer-hms-to-secs secs))
+              (let* ((hms-list (split-string secs ":"))
+                     (h (string-to-number (nth 0 hms-list)))
+            	     (m (string-to-number (nth 1 hms-list)))
+            	     (s (string-to-number (nth 2 hms-list))))
+                (* (+ s (* 60 (+ m (* 60 h)))))))
              ((string-match "^\\([0-9]+\\)$" secs)
               (string-to-number search-option))
              (t (error "Error: Failed to parse link timestamp: %s" secs)))))
