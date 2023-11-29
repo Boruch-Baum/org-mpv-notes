@@ -150,21 +150,21 @@ ARG is passed to `org-link-complete-file'."
           (empv-mpv-args (append empv-mpv-args org-mpv-notes-mpv-args)))
 
       (cl-flet ((alive? ()
-                     (if (eql backend 'mpv)
+                     (if (eq backend 'mpv)
                          (mpv-live-p)
                        (empv--running?)))
 
              (start (path)
-                    (if (eql backend 'mpv)
+                    (if (eq backend 'mpv)
                         (mpv-start path)
                       (if path (empv-play path)
                         (call-interactively 'empv-play-file))))
              (kill ()
-                   (if (eql backend 'mpv)
+                   (if (eq backend 'mpv)
                        (mpv-kill)
                      (empv-exit)))
              (seek (secs)
-                   (if (eql backend 'mpv)
+                   (if (eq backend 'mpv)
                        (mpv-seek secs)
                      (empv-seek secs '("absolute")))))
 
@@ -361,7 +361,7 @@ If `READ-DESCRIPTION' is true, ask for a link description from user."
                           (if (cl-find 'empv features)
                              nil
                             (error "Please load either mpv or empv library"))))
-         (alive (if (eql mpv-backend 'mpv)
+         (alive (if (eq mpv-backend 'mpv)
                    (mpv-live-p)
                   (empv--running?)))
          (path (progn
