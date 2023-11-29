@@ -67,6 +67,29 @@ backend (variable `mpv-default-options' for mpv.el, or variable
 mpv for details."
   :type 'list)
 
+
+(defun org-mpv-notes-pause ()
+  "Toggle pause/run of the mpv instance."
+  (interactive)
+  (or (and (cl-find 'mpv features)
+           (mpv-live-p)
+           (mpv-pause))
+      (and (cl-find 'empv features)
+           (empv--running?)
+           (empv-pause))
+      (error "Error: no mpv instance detected.")))
+
+(defun org-mpv-notes-kill ()
+  "Close the mpv instance."
+  (interactive)
+  (or (and (cl-find 'mpv features)
+           (mpv-live-p)
+           (mpv-kill))
+      (and (cl-find 'empv features)
+           (empv--running?)
+           (empv-exit))
+      (error "Error: no mpv instance detected.")))
+
 (defun org-mpv-notes--cmd (cmd &rest args)
   (or (and (cl-find 'mpv features)
            (mpv-live-p)
@@ -74,7 +97,6 @@ mpv for details."
                   t))
       (and (cl-find 'empv features)
            (empv--running?)
-;          (progn (empv--cmd cmd args)
            (progn (empv--send-command-sync (list cmd args))
                   t))
       (error "Please open a audio/video in either mpv or empv library")))
@@ -516,14 +538,12 @@ within the current buffer."
 (define-minor-mode org-mpv-notes
   "Org minor mode for Note taking alongside audio and video.
 Uses mpv.el to control mpv process"
-  :keymap `((,(kbd "M-n i") . org-mpv-notes-insert-link)
+  :keymap `((,(kbd "M-n i")   . org-mpv-notes-insert-link)
             (,(kbd "M-n M-i") . org-mpv-notes-insert-note)
-
-            (,(kbd "M-n u") . mpv-revert-seek)
-            (,(kbd "M-n s") . org-mpv-notes-save-screenshot)
+            (,(kbd "M-n s")   . org-mpv-notes-save-screenshot)
             (,(kbd "M-n M-s") . org-mpv-notes-screenshot-ocr)
-
-            (,(kbd "M-n k") . mpv-kill)))
+            (,(kbd "M-n SPC") . org-mpv-notes-pause)
+            (,(kbd "M-n k")   . org-mpv-notes-kill)))
 
 (provide 'org-mpv-notes)
 
