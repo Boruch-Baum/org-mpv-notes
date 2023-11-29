@@ -145,15 +145,15 @@ ARG is passed to `org-link-complete-file'."
     ;; Enable Minor mode
     (org-mpv-notes t)
     (let ((backend (or (cl-find 'mpv features)
-                       (cl-find 'empv features)))
+                       (cl-find 'empv features)
+                       (error "Please load either mpv or empv library")))
           (mpv-default-option (format " %s" org-mpv-notes-mpv-args))
           (empv-mpv-args (append empv-mpv-args org-mpv-notes-mpv-args)))
 
       (cl-flet ((alive? ()
-                     (if (eq backend 'mpv)
-                         (mpv-live-p)
-                       (empv--running?)))
-
+                    (if (eq backend 'mpv)
+                       (mpv-live-p)
+                      (empv--running?)))
              (start (path)
                     (if (eq backend 'mpv)
                         (mpv-start path)
@@ -361,7 +361,7 @@ If `READ-DESCRIPTION' is true, ask for a link description from user."
                           (if (cl-find 'empv features)
                              nil
                             (error "Please load either mpv or empv library"))))
-         (alive (if (eq mpv-backend 'mpv)
+         (alive (if mpv-backend
                    (mpv-live-p)
                   (empv--running?)))
          (path (progn
@@ -380,7 +380,7 @@ If `READ-DESCRIPTION' is true, ask for a link description from user."
                        (mpv-get-playback-position)
                       (with-timeout (1 nil)
                         (empv--send-command-sync (list "get_property" 'time-pos))))
-                      (error "Error: mpv time-pos not found"))
+                     (error "Error: mpv time-pos not found"))
                 0))
          (time (max 0 (- time org-mpv-notes-timestamp-lag)))
          (h (floor (/ time 3600)))
