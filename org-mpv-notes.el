@@ -1,5 +1,10 @@
 ;;; org-mpv-notes.el --- Take notes in org mode while watching videos in mpv -*- lexical-binding: t -*-
 
+;; IMPORTANT: This file is Boruch Baum's fork of the package referred
+;; to below, which has now (2023-11-29) diverged by 53 commits from
+;; the upstream. The URL of this fork is
+;; https://github.com/boruch-baum/org-mpv-notes
+
 ;; Copyright (C) 2021-2022 Bibek Panthi
 
 ;; Author: Bibek Panthi <bpanthi977@gmail.com>
