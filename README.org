@@ -1,0 +1,51 @@
+* org-mpv-notes.el
+Take notes in [[https://orgmode.org/][org-mode]] from media files playing in [[https://mpv.io/][mpv]].
+
+From within org-mode, use this package to open a media file in =mpv=,
+and then create links to timestamps within the file. Optionally, you
+can have =mpv= pause automatically when creating a timestamp link,
+allowing you to concentrate on your writing. You can also customize
+the appearance of a timestamp link, and whether the timestamp should
+reflect the instant you type the command or 'n' seconds prior. The
+package allows you to take screenshots of the running media, which can
+be viewed as in-line images when running Emacs as a GUI program. You
+can configure the package to pipe a screenshot to an external OCR
+program and auto-magically insert the ocr-ed text to the org buffer.
+Once a timestamp is created, you can use it to open the media file and
+jump ("seek") directly to that point in the file.
+
+*** Dependencies
+
++ Emacs =mpv= control :: This can be either [[https://github.com/kljohann/mpv.el][mpv.el]] or [[https://github.com/isamert/empv.el][empv.el]]. Both
+  are packages available on [[https://melpa.org/#/][MELPA]]. These packages also allow you to
+  directly control many features of =mpv= from within Emacs.
+
++ External OCR program :: This is optional, and by default is
+  configured for [[https://tesseract-ocr.github.io/tessdoc/Home.html][tesseract]], probably available from your
+  distribution's repositories.
+
+*** Installation
+
++ This package is available on MELPA, so you should be able to install
+  it from within Emacs.
+
+*** Use
+
+This package is pretty flexible, so it doesn't matter whether you open
+an org-mode buffer first or a media file first, as long as you open
+the media file from within Emacs, using either =mpv.el= or =empv.el=.
+
+You can also skip the step of separately opening a media file by
+running M-x =org-mpv-notes-insert-note= or M-x
+=org-mpv-notes-insert-link=. Both commands will prompt you for a media
+file if none is open. The difference between the two is that the
+former will create an org-mode heading and an org-mode timestamp link
+to the beginning of the media file that you choose, and the latter
+will just create the link. There is a third command that is available,
+=org-mpv-notes-open=, but all that does is open a media file; it's
+used internally by the other two commands.
+
+From that point on, you can add heading and timestamps as you wish.
+Same for the screenshot and OCR support. At any point, you can
+control =mpv= either from within Emacs (using =mpv.el= or =empv.el=) or
+directly.
