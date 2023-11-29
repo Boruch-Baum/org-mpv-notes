@@ -67,52 +67,45 @@ backend (variable `mpv-default-options' for mpv.el, or variable
 mpv for details."
   :type 'list)
 
+(defun org-mpv-notes---cmd (mpv-cmd empv-cmd error-msg)
+  "Run a backend command.
+MPV-CMD and EMPV-CMD are lists in the form (CMD ARGS). ERROR-MSG
+is a string."
+  (or (and (cl-find 'mpv features)
+           (mpv-live-p)
+           (progn (apply mpv-cmd)
+                  t))
+      (and (cl-find 'empv features)
+           (empv--running?)
+           (progn (apply empv-cmd)
+                  t))
+      (error error-msg)))
+
+(defun org-mpv-notes--cmd (cmd &rest args)
+  "Send mpv command via backend."
+  (org-mpv-notes---cmd
+    (list #'mpv-run-command cmd args)
+    (list #'empv--send-command-sync (list cmd args))
+    (error "Please open a audio/video in either mpv or empv library")))
+
+(defun org-mpv-notes--get-property (property)
+  (org-mpv-notes---cmd
+    (list 'mpv-get-property property)
+    (list 'with-timeout '(1 nil) 'empv--send-command-sync (list "get_property" property))
+    (error "Please open a audio/video in either mpv or empv library")))
+
+(defun org-mpv-notes--set-property (property value)
+  (org-mpv-notes--cmd "set_property" property value))
 
 (defun org-mpv-notes-pause ()
   "Toggle pause/run of the mpv instance."
   (interactive)
-  (or (and (cl-find 'mpv features)
-           (mpv-live-p)
-           (mpv-pause))
-      (and (cl-find 'empv features)
-           (empv--running?)
-           (empv-pause))
-      (error "Error: no mpv instance detected.")))
+  (org-mpv-notes---cmd '(mpv-pause) '(empv-pause) "Error: no mpv instance detected."))
 
 (defun org-mpv-notes-kill ()
   "Close the mpv instance."
   (interactive)
-  (or (and (cl-find 'mpv features)
-           (mpv-live-p)
-           (mpv-kill))
-      (and (cl-find 'empv features)
-           (empv--running?)
-           (empv-exit))
-      (error "Error: no mpv instance detected.")))
-
-(defun org-mpv-notes--cmd (cmd &rest args)
-  (or (and (cl-find 'mpv features)
-           (mpv-live-p)
-           (progn (apply #'mpv-run-command cmd args)
-                  t))
-      (and (cl-find 'empv features)
-           (empv--running?)
-           (progn (empv--send-command-sync (list cmd args))
-                  t))
-      (error "Please open a audio/video in either mpv or empv library")))
-
-(defun org-mpv-notes--get-property (property)
-  (or (and (cl-find 'mpv features)
-           (mpv-live-p)
-           (mpv-get-property property))
-      (and (cl-find 'empv features)
-           (empv--running?)
-           (with-timeout (1 nil)
-             (empv--send-command-sync (list "get_property" property))))
-      (error "Please open a audio/video in either mpv or empv library")))
-
-(defun org-mpv-notes--set-property (property value)
-  (org-mpv-notes--cmd "set_property" property value))
+  (org-mpv-notes---cmd '(mpv-kill) '(empv-exit) "Error: no mpv instance detected."))
 
 
 ;;;;;
