@@ -125,15 +125,13 @@ ARG is passed to `org-link-complete-file'."
             (secs
              (format "<a href=\"%s&t=%ds\">%s</a>" path secs (substring-no-properties desc))))))
 
-(defvar org-mpv-notes-timestamp-regex "[0-9]+:[0-9]+:[0-9]+")
-
 (defun org-mpv-notes--parse-link (path)
   (let* ((split (split-string path "::"))
          (secs (cadr split)))
     (if (null secs)
       (setq split (append split '(0)))
      (setf (cadr split)
-       (cond ((string-match (concat "^" org-mpv-notes-timestamp-regex "$") secs)
+       (cond ((string-match "^[0-9]+:[0-9]+:[0-9]+$" secs)
               (let* ((hms-list (split-string secs ":"))
                      (h (string-to-number (nth 0 hms-list)))
             	     (m (string-to-number (nth 1 hms-list)))
