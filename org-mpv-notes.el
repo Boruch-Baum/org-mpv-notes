@@ -42,6 +42,23 @@ asynchronously."
   :type 'float
   :group 'org-mpv-notes)
 
+(defcustom org-mpv-notes-mpv-args '("--no-terminal"
+                                    "--idle"
+                                    "--no-focus-on-open"
+                                    "--volume=40"
+                                    "--sub-delay=-1"
+                                    "--ontop=yes"
+                                    "--geometry=100%:100%"
+                                    "--autofit=35%"
+                                    "--autofit-larger=50%")
+  "Args used while starting mpv.
+This will over-ride the settings of your chosen mpv
+backend (variable `mpv-default-options' for mpv.el, or variable
+`empv-mpv-args' for empv.el) for just this use-case. See man(1)
+mpv for details."
+  :type 'list
+  :group 'org-mpv-notes)
+
 (defun org-mpv-notes--cmd (cmd &rest args)
   (or (and (cl-find 'mpv features)
            (mpv-live-p)
@@ -124,7 +141,10 @@ ARG is passed to `org-link-complete-file'."
     ;; Enable Minor mode
     (org-mpv-notes t)
     (let ((backend (or (cl-find 'mpv features)
-                       (cl-find 'empv features))))
+                       (cl-find 'empv features)))
+          (mpv-default-option (format " %s" org-mpv-notes-mpv-args))
+          (empv-mpv-args (append empv-mpv-args org-mpv-notes-mpv-args)))
+
       (cl-flet ((alive? ()
                      (if (eql backend 'mpv)
                          (mpv-live-p)
