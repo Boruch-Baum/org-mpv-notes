@@ -35,12 +35,17 @@
 ;;; MPV and EMPV Compatibility Layer
 ;;;;;
 
+(defgroup org-mpv-notes nil
+  "Options concerning mpv links in Org mode."
+  :group 'org-link
+  :prefix "org-mpv-notes-")
+
 (defcustom org-mpv-notes-empv-wait-interval 0.1
   "How many seconds to wait for mpv to settle.
 This may be necessary because much of the empv library runs
 asynchronously."
-  :type 'float
-  :group 'org-mpv-notes)
+  :type 'float)
+
 
 (defcustom org-mpv-notes-mpv-args '("--no-terminal"
                                     "--idle"
@@ -56,8 +61,7 @@ This will over-ride the settings of your chosen mpv
 backend (variable `mpv-default-options' for mpv.el, or variable
 `empv-mpv-args' for empv.el) for just this use-case. See man(1)
 mpv for details."
-  :type 'list
-  :group 'org-mpv-notes)
+  :type 'list)
 
 (defun org-mpv-notes--cmd (cmd &rest args)
   (or (and (cl-find 'mpv features)
@@ -198,8 +202,7 @@ Filename is passed as first argument.  The function has to copy
 the file to proper location and insert a link to that file."
   :type '(function)
   :options '(#'org-mpv-notes-save-as-attach
-             #'org-download-image)
-  :group 'org-mpv-notes)
+             #'org-download-image))
 
 ;; save screenshot as attachment
 (defun org-mpv-notes-save-screenshot ()
@@ -219,17 +222,15 @@ the file to proper location and insert a link to that file."
 
 (defcustom org-mpv-notes-ocr-command "tesseract"
   "OCR program to extract text from mpv screenshot."
-  :type '(string)
-  :group 'org-mpv-notes)
+  :type '(string))
 
 (defcustom org-mpv-notes-ocr-command-args "-"
   "Extra arguments to pass to ocr-command after the input image file."
-  :type '(string)
-  :group 'org-mpv-notes)
+  :type '(string))
 
 (defun org-mpv-notes--ocr-on-file (file)
   "Run tesseract OCR on the screenshot FILE."
-  (unless (executable-find org-mpv-notes-ocr-command) ;; a defcustom
+  (unless (executable-find org-mpv-notes-ocr-command)
     (user-error "OCR program %S not found" org-mpv-notes-ocr-command))
   (with-temp-buffer
     (if (zerop (call-process org-mpv-notes-ocr-command nil t nil
@@ -257,8 +258,7 @@ the file to proper location and insert a link to that file."
   "Restrict timestamp navigation to within the current heading.
 This affects functions `org-mpv-notes-next-timestamp' and
 `org-mpv-notes-previous-timestamp'."
-  :type 'boolean
-  :group 'org-mpv-notes)
+  :type 'boolean)
 
 (defun org-mpv-notes-timestamp-p ()
   "Return non-NIL if POINT is on a timestamp."
@@ -315,19 +315,15 @@ If there is no timestamp at POINT, consider the previous one as
 
 (defcustom org-mpv-notes-link-prefix "\n\n("
   "String to precede timestamp links."
-  :type 'string
-  :group 'org-mpv-notes)
+  :type 'string)
 
 (defcustom org-mpv-notes-link-suffix "): "
   "String to follow timestamp links."
-  :type 'string
-  :group 'org-mpv-notes)
-
+  :type 'string)
 
 (defcustom org-mpv-notes-pause-on-link-create nil
   "Whether to automatically pause mpv when creating a link or note."
-  :type 'boolean
-  :group 'org-mpv-notes)
+  :type 'boolean)
 
 (defun org-mpv-notes-toggle-pause-on-link-create ()
   "Toggle whether to automatically pause mpv when creating a link or note."
@@ -426,8 +422,7 @@ NIL means use the timestamp in conjunction with variables
 value can be over-ridden on a per-use basis at run-time by
 calling function `org-mpv-notes-insert-link' with a prefix
 argument."
-  :type 'boolean
-  :group 'org-mpv-notes)
+  :type 'boolean)
 
 (defun org-mpv-notes-insert-link (&optional prompt-for-description)
   "Insert link with timestamp.
