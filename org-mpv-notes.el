@@ -125,17 +125,17 @@ ARG is passed to `org-link-complete-file'."
 (defvar org-mpv-notes-timestamp-regex "[0-9]+:[0-9]+:[0-9]+")
 
 (defun org-mpv-notes--parse-link (path)
-  (let (search-option
-        (secs nil))
-    (when (string-match "::\\(.*\\)\\'" path)
-      (setq search-option (match-string 1 path))
-      (setq path (replace-match "" nil nil path)))
-    (cond ((null search-option) nil)
-          ((string-match (concat "^" org-mpv-notes-timestamp-regex) search-option)
-           (setf secs (org-timer-hms-to-secs search-option)))
-          ((string-match "^\\([0-9]+\\)$" search-option)
-           (setf secs (string-to-number search-option))))
-    (values path (and secs (> secs 0) secs))))
+  (let* ((split (split-string path "::"))
+         (secs (cadr split)))
+    (if (null secs)
+      (setq split (append split '(0)))
+     (setf (cadr split)
+       (cond ((string-match (concat "^" org-mpv-notes-timestamp-regex "$") secs)
+              (org-timer-hms-to-secs secs))
+             ((string-match "^\\([0-9]+\\)$" secs)
+              (string-to-number search-option))
+             (t (error "Error: Failed to parse link timestamp: %s" secs)))))
+    split))
 
 (defun org-mpv-notes-open (path &optional arg)
   "Open the mpv `PATH'.
