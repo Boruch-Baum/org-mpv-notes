@@ -26,8 +26,20 @@ jump ("seek") directly to that point in the file.
 
 *** Installation
 
-+ This package is available on MELPA, so you should be able to install
-  it from within Emacs.
+This package (the original version of it) is available on MELPA, so
+you should be able to install it (that) from within Emacs.
+
+(This readme is for the fork of the package, available at [[https://github.com/Boruch-Baum/org-mpv-notes][Boruch
+Baum's github repository]]. It is not available on MELPA, so you'll
+need to manually install it or evaluate its single elisp file. A
+common modern method of manual installation uses package
+=use-package=:
+
+#+begin_src emacs-lisp
+(use-package 'org-mpv-notes
+    :load-path "/path/to/directory/with/the/elisp/file"
+    :commands org-mpv-notes)
+#+end_src
 
 *** Use
 
