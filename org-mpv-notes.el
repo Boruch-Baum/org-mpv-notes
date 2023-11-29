@@ -160,7 +160,8 @@ ARG is passed to `org-link-complete-file'."
                         (cl-find 'empv features)
                         (error "Please load either mpv or empv library")))
            (mpv-default-option (format " %s" org-mpv-notes-mpv-args))
-           (empv-mpv-args (append empv-mpv-args org-mpv-notes-mpv-args)))
+           (empv-mpv-args (when (boundp 'empv-mpv-args)
+                            (append empv-mpv-args org-mpv-notes-mpv-args))))
 
       (cl-flet ((alive? ()
                     (if (eq backend 'mpv)
