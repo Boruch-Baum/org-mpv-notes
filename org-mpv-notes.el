@@ -112,15 +112,19 @@ ARG is passed to `org-link-complete-file'."
 (defun org-mpv-notes-export (path desc backend)
   (when (and (eq backend 'html)
              (string-search "youtube.com/" path))
-    (cl-multiple-value-bind (path secs) (org-mpv-notes--parse-link path)
+    (let* ((link (org-mpv-notes--parse-link path))
+           (path (car link))
+           (secs (cadr link))
+           video-id
+           url)
       (cond ((or (not desc) (string-equal desc ""))
-             (let* ((video-id (cadar (url-parse-query-string path)))
-                    (url (if (string-empty-p video-id) path
-                           (format "//youtube.com/embed/%s" video-id))))
-               (format "<p style=\"text-align:center; width:100%%\"><iframe width=\"560\" height=\"315\" src=\"https://www.youtube-nocookie.com/embed/lJIrF4YjHfQ\" title=\"%s\" frameborder=\"0\" allow=\"accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share\" allowfullscreen></iframe></p>"
+              (setq video-id (cadar (url-parse-query-string path)))
+              (setq url (when (string-empty-p video-id) path
+                          (format "//youtube.com/embed/%s" video-id)))
+              (format "<p style=\"text-align:center; width:100%%\"><iframe width=\"560\" height=\"315\" src=\"https://www.youtube-nocookie.com/embed/lJIrF4YjHfQ\" title=\"%s\" frameborder=\"0\" allow=\"accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share\" allowfullscreen></iframe></p>"
                        url desc)))
             (secs
-             (format "<a href=\"%s&t=%ds\">%s</a>" path secs (substring-no-properties desc)))))))
+             (format "<a href=\"%s&t=%ds\">%s</a>" path secs (substring-no-properties desc))))))
 
 (defvar org-mpv-notes-timestamp-regex "[0-9]+:[0-9]+:[0-9]+")
 
@@ -141,14 +145,16 @@ ARG is passed to `org-link-complete-file'."
   "Open the mpv `PATH'.
 `ARG' is required by org-follow-link but is ignored here."
   (interactive "fSelect file to open: ")
-  (cl-multiple-value-bind (path secs) (org-mpv-notes--parse-link path)
     ;; Enable Minor mode
     (org-mpv-notes t)
-    (let ((backend (or (cl-find 'mpv features)
-                       (cl-find 'empv features)
-                       (error "Please load either mpv or empv library")))
-          (mpv-default-option (format " %s" org-mpv-notes-mpv-args))
-          (empv-mpv-args (append empv-mpv-args org-mpv-notes-mpv-args)))
+    (let* ((link (org-mpv-notes--parse-link path))
+           (path (car link))
+           (secs (cadr link))
+           (backend (or (cl-find 'mpv features)
+                        (cl-find 'empv features)
+                        (error "Please load either mpv or empv library")))
+           (mpv-default-option (format " %s" org-mpv-notes-mpv-args))
+           (empv-mpv-args (append empv-mpv-args org-mpv-notes-mpv-args)))
 
       (cl-flet ((alive? ()
                     (if (eq backend 'mpv)
@@ -177,7 +183,7 @@ ARG is passed to `org-link-complete-file'."
                (start path)))
         ;; Jump to link
           (sleep-for org-mpv-notes-empv-wait-interval)
-          (seek (or secs 0))))))
+          (seek (or secs 0)))))
 
 ;;;;;
 ;;; Screenshot
