@@ -100,7 +100,7 @@ is a string."
 (defun org-mpv-notes-pause ()
   "Toggle pause/run of the mpv instance."
   (interactive)
-  (org-mpv-notes---cmd '(mpv-pause) '(empv-pause) "Error: no mpv instance detected."))
+  (org-mpv-notes---cmd '(mpv-pause) '(empv-toggle) "Error: no mpv instance detected."))
 
 (defun org-mpv-notes-kill ()
   "Close the mpv instance."
