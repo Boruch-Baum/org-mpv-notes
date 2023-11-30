@@ -146,7 +146,7 @@ ARG is passed to `org-link-complete-file'."
              (format "<a href=\"%s&t=%ds\">%s</a>" path secs (substring-no-properties desc))))))
 
 (defun org-mpv-notes--parse-link (path)
-  (let* ((split (split-string path "::"))
+  (let* ((split (split-string path "::" nil "\\(^\\[\\[mpv:\\)\\|\\(\\]\\[.*$\\)"))
          (secs (cadr split)))
     (if (null secs)
       (setq split (append split '(0)))
