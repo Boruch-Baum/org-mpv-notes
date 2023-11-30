@@ -416,6 +416,15 @@ If `READ-DESCRIPTION' is true, ask for a link description from user."
       (setf description timestamp))
     (concat "[[mpv:" path "::" timestamp "][" description "]]")))
 
+(defcustom org-mpv-notes-note-name-prune-regex "\\( \\\\\\[[^]]+\\\\]\\)\\|\\(\\.[^.]*$\\)"
+  "What not to include in a default note heading.
+When variable `org-mpv-notes-insert-link-prompt-for-description'
+is NIL, a note's filename will be used as the basis for the
+created org heading text. This regex is used to remove filename
+parts from that. The default value removes filename extensions
+and youtube-style media ID hashes."
+  :type 'regexp)
+
 (defun org-mpv-notes-insert-note (&optional prompt-for-description)
   "Insert a heading with link & timestamp.
 With PREFIX-ARG, over-ride the setting of variable
@@ -428,7 +437,10 @@ With PREFIX-ARG, over-ride the setting of variable
               org-mpv-notes-insert-link-prompt-for-description))))
     (when link
       (org-insert-heading)
-      (insert (file-name-nondirectory (car (org-mpv-notes--parse-link link)))
+      (insert (replace-regexp-in-string
+                org-mpv-notes-note-name-prune-regex
+                ""
+                (file-name-nondirectory (car (org-mpv-notes--parse-link link))))
               org-mpv-notes-link-prefix
               link
               org-mpv-notes-link-suffix))))
