@@ -29,11 +29,13 @@
 ;; installed) and insert the ocr-ed text to the org buffer.
 
 ;;; Code:
-(require 'cl-lib)
-(require 'mpv nil 'noerror)
-(require 'empv nil 'noerror)
-(require 'org-attach)
-(require 'org-element)
+(require 'cl-lib) ; for cl-find
+(let ((a (require 'mpv nil 'noerror))   ; option 1 for mpv control backend
+      (b (require 'empv nil 'noerror))) ; option 2 for mpv control backend
+  (unless (or a b)
+    (error "Error: At least one of packages mpv.el, empv.el must be installed.")))
+(require 'org-attach)  ; for org-attach-attach
+(require 'org-element) ; for org-element-{context,property}
 
 ;;;;;
 ;;; MPV and EMPV Compatibility Layer
