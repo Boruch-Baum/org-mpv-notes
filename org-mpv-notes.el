@@ -166,7 +166,7 @@ ARG is passed to `org-link-complete-file'."
   "Open the mpv `PATH'.
 `ARG' is required by org-follow-link but is ignored here."
   (interactive "fSelect file to open: ")
-  (org-mpv-notes t)
+  (org-mpv-notes-mode t)
   (let* ((link (org-mpv-notes--parse-link path))
          (path (car link))
          (secs (or (cadr link) 0))
@@ -517,8 +517,9 @@ within the current buffer."
 ;;; Minor Mode and Keymap
 ;;;;;
 
+
 ;;;###autoload
-(define-minor-mode org-mpv-notes
+(define-minor-mode org-mpv-notes-mode
   "Org minor mode for Note taking alongside audio and video.
 Uses mpv.el to control mpv process"
   :keymap `((,(kbd "M-n i")       . org-mpv-notes-insert-link)
