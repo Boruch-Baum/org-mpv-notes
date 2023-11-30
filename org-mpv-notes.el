@@ -372,7 +372,7 @@ to create a note or link."
   (message "mpv will now %spause when creating an org-mpv link/note"
     (if org-mpv-notes-pause-on-link-create "" "NOT ")))
 
-(cl-defun org-mpv-notes--create-link (&optional read-description)
+(defun org-mpv-notes--create-link (&optional read-description)
   "Create a link with timestamp to insert in org file.
 If `READ-DESCRIPTION' is true, ask for a link description from user."
   (let* ((mpv-backend (or (and (cl-find 'mpv features) (mpv-live-p))
