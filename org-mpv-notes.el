@@ -401,10 +401,10 @@ If `READ-DESCRIPTION' is true, ask for a link description from user."
                      (error "Error: mpv time-pos not found"))
                 0))
          (time (max 0 (- time org-mpv-notes-timestamp-lag)))
-         (h (floor (/ time 3600)))
-         (m (floor (/ (mod time 3600) 60)))
-         (s (floor (mod time 60)))
-         (timestamp (format "%02d:%02d:%02d" h m s))
+         (timestamp (format "%02d:%02d:%02d"
+                            (floor (/ time 3600))          ;; hours
+                            (floor (/ (mod time 3600) 60)) ;; minutes
+                            (floor (mod time 60))))        ;; seconds
          (description ""))
     (when org-mpv-notes-pause-on-link-create
       (if mpv-backend
