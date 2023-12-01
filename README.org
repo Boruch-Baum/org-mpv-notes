@@ -6,11 +6,11 @@ and then create links to timestamps within the file. Optionally, you
 can have =mpv= pause automatically when creating a timestamp link,
 allowing you to concentrate on your writing. You can also customize
 the appearance of a timestamp link, and whether the timestamp should
-reflect the instant you type the command or 'n' seconds prior. The
+reflect the instant you type the command or /n/ seconds prior. The
 package allows you to take screenshots of the running media, which can
 be viewed as in-line images when running Emacs as a GUI program. You
 can configure the package to pipe a screenshot to an external OCR
-program and auto-magically insert the ocr-ed text to the org buffer.
+program and auto-magically insert the OCR-ed text to the org buffer.
 Once a timestamp is created, you can use it to open the media file and
 jump ("seek") directly to that point in the file.
 
@@ -48,14 +48,14 @@ an org-mode buffer first or a media file first, as long as you open
 the media file from within Emacs, using either =mpv.el= or =empv.el=.
 
 When you do open the org-mode buffer, you need to enable the minor
-mode =org-mpv-notes-mode=. One way to do that is to manually run M-x
+mode =org-mpv-notes-mode=. One way to do that is to manually run ~M-x~
 =org-mpv-notes-mode= when you open the file. A second method is to set
 its [[https://www.gnu.org/software/emacs/manual/html_node/emacs/Specifying-File-Variables.html][file-local variable value]]. A third method is to automatically
 enable the mode for all org-mode buffers by [[https://www.gnu.org/software/emacs/manual/html_node/elisp/Setting-Hooks.html][adding it]] to
 [[https://orgmode.org/worg/doc.html#org-capture-mode-on-hook][org-mode-hook]].
 
 You can skip the step of separately opening a media file by
-running M-x =org-mpv-notes-insert-note= or M-x
+running ~M-x~ =org-mpv-notes-insert-note= or ~M-x~
 =org-mpv-notes-insert-link=. Both commands will prompt you for a media
 file if none is open. The difference between the two is that the
 former will create an org-mode heading and an org-mode timestamp link
@@ -86,12 +86,12 @@ The org-mpv-notes =minor-mode= binds the followings keys:
 *** Dealing with subtitles
 
 If you expect that a significant part of your note-taking is going to
-amount to transcribing audio, then you can use command M-x
+amount to transcribing audio, then you can use command ~M-x~
 =org-mpv-notes-subtitles-insert= to insert a formatted version of a
 local subtitle file into the current buffer. The command will also
 give you the option to link all the inserted subtitle timestamps to a
-local media file. Currently supported subtitle formats are srv1, srv2,
-srv3, ttml, and vtt. I'm not aware of =mpv= being able to download
+local media file. Currently supported subtitle formats are ~srv1~, ~srv2~,
+~srv3~, ~ttml~, and ~vtt~. I'm not aware of =mpv= being able to download
 subtitle files, but programs with that feature (eg. [[https://github.com/ytdl-org/youtube-dl][youtube-dl]],
 [[https://github.com/yt-dlp/yt-dlp][yt-dlp]], [[https://github.com/Diaoul/subliminal][subliminal]]) are probably available in your distribution's
 repositories and, of course, you can try manually downloading them.
@@ -105,17 +105,17 @@ single timestamp snippets.
 
 *** Dealing with manual timestamps
 
-If you have text representations of timestamps in the form hh:mm:ss,
+If you have text representations of timestamps in the form /hh:mm:ss/,
 and want to convert them to links that can be used by this package,
-select the region spanning the timestamps and run command M-x
+select the region spanning the timestamps and run command ~M-x~
 =org-mpv-notes-replace-timestamp-with-link=. It will prompt you for a
 text string representing the link URI.
 
 *** Dealing with a changed path or file name
 
 If a media file to which you had linked has since been renamed or
-moved, place POINT on one of the now-broken links and run command M-x
+moved, place POINT on one of the now-broken links and run command ~M-x~
 =org-mpv-notes-change-link-reference=. It will ask you for the new
 pathspec and make the change for that link only. In order to perform
 the change on all occurrences in the org-mode file, run the command
-C-u M-x =org-mpv-notes-change-link-reference=.
+~C-u M-x~ =org-mpv-notes-change-link-reference=.
