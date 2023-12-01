@@ -420,10 +420,7 @@ If `READ-DESCRIPTION' is true, ask for a link description from user."
                      (error "Error: mpv time-pos not found"))
                 0))
          (time (max 0 (- time org-mpv-notes-timestamp-lag)))
-         (timestamp (format "%02d:%02d:%02d"
-                            (floor (/ time 3600))          ;; hours
-                            (floor (/ (mod time 3600) 60)) ;; minutes
-                            (floor (mod time 60))))        ;; seconds
+         (timestamp (org-mpv-notes--secs-to-hhmmss time))
          (description ""))
     (when org-mpv-notes-pause-on-link-create
       (if mpv-backend
@@ -565,6 +562,12 @@ Uses mpv.el to control mpv process"
 
 
 
+(defun org-mpv-notes--secs-to-hhmmss (secs)
+  "Convert integer seconds to hh:mm:ss string"
+  (format "%02d:%02d:%02d"
+          (floor (/ secs 3600))          ;; hours
+          (floor (/ (mod secs 3600) 60)) ;; minutes
+          (floor (mod secs 60))))        ;; seconds
 
 (defun org-mpv-notes--subtitles-insert-srv1 ()
   "Edit srv1 formatted subtitle file for import.
@@ -579,11 +582,7 @@ This function is meant to be called by function
   (let (secs)
     (while (re-search-forward "<text start=\"\\([0-9]+\\)[^>]*>" nil t)
       (setq secs (string-to-number (match-string 1)))
-      (replace-match
-        (format "\n\n%02d:%02d:%02d "
-                (floor (/ secs 3600))          ;; hours
-                (floor (/ (mod secs 3600) 60)) ;; minutes
-                (floor (mod secs 60))))))      ;; seconds
+      (replace-match (concat "\n\n" (org-mpv-notes--secs-to-hhmmss secs) " "))))
   ;; 3: Remove cruft html from body
   (goto-char (point-min))
   (while (re-search-forward "</text>" nil t)
@@ -604,11 +603,7 @@ This function is meant to be called by function
   (let (secs)
     (while (re-search-forward "<text t=\"\\([0-9]+\\)[^>]*>" nil t)
       (setq secs (string-to-number (substring (match-string 1) 0 -3)))
-      (replace-match
-        (format "\n\n%02d:%02d:%02d "
-                (floor (/ secs 3600))          ;; hours
-                (floor (/ (mod secs 3600) 60)) ;; minutes
-                (floor (mod secs 60))))))      ;; seconds
+      (replace-match (concat "\n\n" (org-mpv-notes--secs-to-hhmmss secs) " "))))
   ;; 3: Remove cruft html from body
   (goto-char (point-min))
   (while (re-search-forward "</text>" nil t)
@@ -629,11 +624,7 @@ This function is meant to be called by function
   (let (secs)
     (while (re-search-forward "<p t=\"\\([0-9]+\\)[^>]*>" nil t)
       (setq secs (string-to-number (substring (match-string 1) 0 -3)))
-      (replace-match
-        (format "\n%02d:%02d:%02d "
-                (floor (/ secs 3600))          ;; hours
-                (floor (/ (mod secs 3600) 60)) ;; minutes
-                (floor (mod secs 60))))))      ;; seconds
+      (replace-match (concat "\n" (org-mpv-notes--secs-to-hhmmss secs) " "))))
   ;; 3: Remove cruft html from body
   (goto-char (point-min))
   (while (re-search-forward "</p>" nil t)
