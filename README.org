@@ -2,17 +2,18 @@
 Take notes in [[https://orgmode.org/][org-mode]] from media files playing in [[https://mpv.io/][mpv]].
 
 From within org-mode, use this package to open a media file in =mpv=,
-and then create links to timestamps within the file. Optionally, you
-can have =mpv= pause automatically when creating a timestamp link,
-allowing you to concentrate on your writing. You can also customize
-the appearance of a timestamp link, and whether the timestamp should
-reflect the instant you type the command or /n/ seconds prior. The
-package allows you to take screenshots of the running media, which can
-be viewed as in-line images when running Emacs as a GUI program. You
-can configure the package to pipe a screenshot to an external OCR
-program and auto-magically insert the OCR-ed text to the org buffer.
-Once a timestamp is created, you can use it to open the media file and
-jump ("seek") directly to that point in the file.
+and then create links to timestamps within that media file.
+Optionally, you can have =mpv= pause automatically when creating a
+timestamp link, allowing you to concentrate on your writing. You can
+also customize the appearance of a timestamp link, and whether the
+timestamp should reflect the instant you type the command or /n/
+seconds prior. The package allows you to take screenshots of the
+running media, which can be viewed as in-line images when running
+Emacs as a GUI program. You can configure the package to pipe a
+screenshot to an external OCR program and auto-magically insert the
+OCR-ed text to the org buffer. Once a timestamp is created, you can
+use it to open the media file and jump ("seek") directly to that point
+in the file.
 
 *** Dependencies
 
@@ -33,12 +34,13 @@ you should be able to install it (that) from within Emacs.
 Baum's github repository]]. It is not available on MELPA, so you'll
 need to manually install it or evaluate its single elisp file. A
 common modern method of manual installation uses package
-=use-package=:
+[[https://www.gnu.org/software/emacs/manual/html_mono/use-package.html][use-package]]^{[[https://github.com/jwiegley/use-package][github]]}:
 
 #+begin_src emacs-lisp
 (use-package 'org-mpv-notes
-    :load-path "/path/to/directory/with/the/elisp/file"
-    :commands org-mpv-notes)
+  :load-path "/path/to/directory/with/the/elisp/file"
+  :commands org-mpv-notes
+  :hook org-mode)
 #+end_src
 
 *** Use
@@ -116,6 +118,6 @@ text string representing the link URI.
 If a media file to which you had linked has since been renamed or
 moved, place POINT on one of the now-broken links and run command ~M-x~
 =org-mpv-notes-change-link-reference=. It will ask you for the new
-pathspec and make the change for that link only. In order to perform
+path-spec and make the change for that link only. In order to perform
 the change on all occurrences in the org-mode file, run the command
 ~C-u M-x~ =org-mpv-notes-change-link-reference=.
