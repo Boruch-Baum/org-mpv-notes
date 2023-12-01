@@ -698,7 +698,10 @@ This function is meant to be called by function
         (replace-match "\\1"))
       (fill-region (point-min) (point-max))
       (when link
-        (org-mpv-notes-replace-timestamp-with-link (point-min) (point-max) link))
+        (org-mpv-notes-replace-timestamp-with-link (point-min) (point-max) link)
+        (goto-char (point-min))
+        (while (re-search-forward "\n\n\n+" nil t)
+          (replace-match "\n\n")))
       (insert-into-buffer target-buffer))))
 
 (provide 'org-mpv-notes)

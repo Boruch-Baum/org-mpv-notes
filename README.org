@@ -97,7 +97,7 @@ subtitle files, but programs with that feature (eg. [[https://github.com/ytdl-or
 repositories and, of course, you can try manually downloading them.
 
 #+begin_quote
-Subtitle files are timestamped by each and every line of screen text.
+Subtitle files are timestamped at each and every line of screen text.
 This creates too many text interruptions for note-taking, so what the
 command does is try to identify audio paragraphs and combine them into
 single timestamp snippets.
